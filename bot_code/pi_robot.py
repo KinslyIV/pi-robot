@@ -1,6 +1,7 @@
 import time
+import RPi.GPIO as GPIO
 from motor import Motor
-from bot_code.constants import *
+from constants import *
 
 
 class PiBot:
@@ -10,6 +11,8 @@ class PiBot:
     current_speed : int = 0
 
     def __init__(self, **kwargs) -> None:
+
+        GPIO.setmode(GPIO.BCM)
 
         self.motor_left = Motor(kwargs.get('IN1', IN1), 
                            kwargs.get('IN2', IN2),
@@ -21,8 +24,6 @@ class PiBot:
                            kwargs.get('EN', EN2),
                            kwargs.get('freq', default_freq))
         
-        self.motor_left.setup()
-        self.motor_right.setup()
         
     def move_foward(self, speed, duration=None):
         self.current_speed = speed

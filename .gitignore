@@ -4,3 +4,4 @@ pi-bot
 .vscode
 .python-version
 .venv
+*/__pycache__/*
