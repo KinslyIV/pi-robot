@@ -5,3 +5,4 @@ pi-bot
 .python-version
 .venv
 */__pycache__/*
+*.swp
