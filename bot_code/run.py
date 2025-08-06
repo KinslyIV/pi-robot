@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 
 my_pibot = PiBot()
 
-my_pibot.move_foward(60)
+my_pibot.move_forward(60)
 time.sleep(1.5)
 my_pibot.turn_right()
 my_pibot.change_speed(90)

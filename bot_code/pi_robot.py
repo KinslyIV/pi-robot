@@ -1,18 +1,11 @@
 import time
-import RPi.GPIO as GPIO
 from motor import Motor
 from constants import *
 
 
 class PiBot:
 
-    motor_right : Motor
-    motor_left : Motor
-    current_speed : int = 0
-
     def __init__(self, **kwargs) -> None:
-
-        GPIO.setmode(GPIO.BCM)
 
         self.motor_left = Motor(kwargs.get('IN1', IN1), 
                            kwargs.get('IN2', IN2),
@@ -23,12 +16,14 @@ class PiBot:
                            kwargs.get('IN2', IN4),
                            kwargs.get('EN', EN2),
                            kwargs.get('freq', default_freq))
+
+        self.current_speed = 0
         
         
-    def move_foward(self, speed, duration=None):
+    def move_forward(self, speed, duration=None):
         self.current_speed = speed
-        self.motor_left.foward(speed)
-        self.motor_right.foward(speed)
+        self.motor_left.forward(speed)
+        self.motor_right.forward(speed)
 
         if duration:
             time.sleep(duration)
@@ -57,9 +52,11 @@ class PiBot:
         self.motor_left.set_speed(speed)
         self.motor_right.set_speed(speed)
 
-    def turn_around(self, speed = current_speed, clockwise= True, duration= 3.0):
+    def turn_around(self, speed = None, clockwise= True, duration= 3.0):
+        if speed is None:
+            speed = self.current_speed
         if clockwise:
-            self.motor_left.foward(speed)
+            self.motor_left.forward(speed)
             self.motor_right.backward(speed)
         else:
             self.motor_left.backward(speed)
@@ -69,10 +66,14 @@ class PiBot:
             time.sleep(duration)
             self.stop()
 
-    def stop_turn_left(self, speed = current_speed, duration = turn_duration):
+    def stop_turn_left(self, speed = None, duration = turn_duration):
+        if speed is None:
+            speed = self.current_speed
         self.turn_around(speed, clockwise=False, duration=duration)
 
-    def stop_turn_right(self, speed = current_speed, duration = turn_duration):
+    def stop_turn_right(self, speed = None, duration = turn_duration):
+        if speed is None:
+            speed = self.current_speed
         self.turn_around(speed, clockwise=True, duration=duration)
 
     def turn_left(self, duration=turn_duration, delta=turn_speed_delta):

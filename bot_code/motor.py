@@ -1,22 +1,14 @@
 from enum import Enum
+import pigpio
 from typing import Optional
-import RPi.GPIO as GPIO
 from constants import *
 
 
 class Direction(Enum):
-    FOWARD = 1
+    FORWARD = 1
     BACKWARD = 2
 
 class Motor:
-    IN1 : int = 0
-    IN2 : int = 0
-    EN : int = 0
-    freq : int = 0
-    current_speed : int = 0
-    pwm : GPIO.PWM
-    stopped : bool
-    direction : Direction
 
     def __init__(self, in1: int, in2: int, en: int, freq: int = default_freq) -> None:
         # Setting pins
@@ -25,17 +17,25 @@ class Motor:
         self.EN = en
         self.frequency = freq
         self.current_speed = 0
-    
+        self.direction: Optional[Direction] = None
+        self.stopped: bool = True
+        self.pi = pigpio.pi()
         # init
         self.setup()
         
 
     def setup(self):
-        GPIO.setup(self.IN1, GPIO.OUT)
-        GPIO.setup(self.IN2, GPIO.OUT)
-        GPIO.setup(self.EN, GPIO.OUT)
-        self.pwm = GPIO.PWM(self.EN, self.frequency)
-        self.pwm.start(0)
+        self.pi.set_mode(self.IN1, pigpio.OUTPUT)
+        self.pi.set_mode(self.IN2, pigpio.OUTPUT)
+        self.pi.set_mode(self.EN, pigpio.OUTPUT)
+        # Set the PWM frequency (this sets frequency for EN pin)
+        self.pi.set_PWM_frequency(self.EN, self.frequency)
+        self.pi.set_PWM_dutycycle(self.EN, 0)  # 0 speed
+
+        # Initialize motor in stopped state
+        self.pi.write(self.IN1, 0)
+        self.pi.write(self.IN2, 0)
+
        # print(self.IN1, self.IN2, self.EN)
 
     def set_speed(self, speed=None):
@@ -43,9 +43,10 @@ class Motor:
         if speed is None:
             speed = self.current_speed
         self.current_speed = speed
-        self.pwm.ChangeDutyCycle(speed)
+        self.pi.set_PWM_dutycycle(self.EN, speed)
 
-    def foward(self, speed = None):
+
+    def forward(self, speed = None):
         if speed is None:
             speed = self.current_speed
         self.stopped = speed == 0
@@ -54,13 +55,13 @@ class Motor:
 
     def set_direction(self, foward):
         if foward:
-            self.direction = Direction.FOWARD
-            GPIO.output(self.IN1, GPIO.HIGH)
-            GPIO.output(self.IN2, GPIO.LOW)
+            self.direction = Direction.FORWARD
+            self.pi.write(self.IN1, 1)
+            self.pi.write(self.IN2, 0)
         else:
             self.direction = Direction.BACKWARD
-            GPIO.output(self.IN1, GPIO.LOW)
-            GPIO.output(self.IN2, GPIO.HIGH)
+            self.pi.write(self.IN1, 0)
+            self.pi.write(self.IN2, 1)
 
     def backward(self, speed = None):
         if speed is None:
@@ -71,12 +72,12 @@ class Motor:
 
     def stop(self):
         self.stopped = True
-        GPIO.output(self.IN1, GPIO.LOW)
-        GPIO.output(self.IN2, GPIO.LOW)
-        self.pwm.ChangeDutyCycle(0)
+        self.pi.write(self.IN1, 0)
+        self.pi.write(self.IN2, 0)
+        self.pi.set_PWM_dutycycle(self.EN, 0)
 
     def move(self):
-        if self.direction is Direction.FOWARD:
+        if self.direction is Direction.FORWARD:
             self.set_direction(True)
             self.set_speed()
         elif self.direction is Direction.BACKWARD:
