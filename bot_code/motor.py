@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 import pigpio
 from typing import Optional
@@ -20,6 +21,7 @@ class Motor:
         self.direction: Optional[Direction] = None
         self.stopped: bool = True
         self.pi = pigpio.pi()
+        self.pi.set_PWM_range(self.EN, 100)
         # init
         self.setup()
         
@@ -70,8 +72,22 @@ class Motor:
         self.set_direction(False)
         self.set_speed(speed)
 
-    def stop(self):
+    def stop(self, delay=0.05, step=5):
         self.stopped = True
+        """
+            Gradually reduce speed to 0 to stop the motor smoothly.
+
+            :param step: Percentage to decrease per iteration.
+            :param delay: Time (in seconds) to wait between speed changes.
+            """
+        while self.current_speed > 0:
+            new_speed = max(0, self.current_speed - step)
+            self.pi.set_PWM_dutycycle(self.EN, new_speed)
+            self.current_speed = new_speed
+            time.sleep(delay)
+
+        # Once speed is 0, stop the motor direction (optional)
+        print("Motor stopped smoothly.")
         self.pi.write(self.IN1, 0)
         self.pi.write(self.IN2, 0)
         self.pi.set_PWM_dutycycle(self.EN, 0)
