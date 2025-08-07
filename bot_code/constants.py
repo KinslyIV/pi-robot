@@ -13,6 +13,8 @@ default_freq = 25000
 turn_duration = 0.5
 turn_speed_delta = 50
 
+MAX_SPEED = 255
+
 # Commands
 FORWARD = "forward"
 BACKWARD = "backward"
