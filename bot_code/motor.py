@@ -45,7 +45,7 @@ class Motor:
         if speed is None:
             speed = self.current_speed
         self.current_speed = speed
-        duty_cycle = int(speed / 100) * MAX_SPEED
+        duty_cycle = int((self.current_speed / 100) * MAX_SPEED)
         self.pi.set_PWM_dutycycle(self.EN, duty_cycle)
 
 
@@ -83,7 +83,7 @@ class Motor:
             """
 
         speed = self.current_speed
-        speed = int(speed / 100) * MAX_SPEED
+        speed = int((self.current_speed / 100) * MAX_SPEED)
         while speed > 0:
             new_speed = max(0, speed - step)
             self.pi.set_PWM_dutycycle(self.EN, new_speed)
