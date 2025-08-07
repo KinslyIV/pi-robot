@@ -18,7 +18,7 @@ class PiBot:
                            kwargs.get('freq', default_freq))
 
         self.current_speed = 0
-        
+
         
     def move_forward(self, speed, duration=None):
         self.current_speed = speed
@@ -52,9 +52,9 @@ class PiBot:
         self.motor_left.set_speed(speed)
         self.motor_right.set_speed(speed)
 
-    def turn_around(self, speed = None, clockwise= True, duration= 3.0):
+    def turn_round(self, speed = None, clockwise= True, duration= 3.0):
         if speed is None:
-            speed = self.current_speed
+            speed = self.current_speed if self.current_speed != 0 else 70
         if clockwise:
             self.motor_left.forward(speed)
             self.motor_right.backward(speed)
@@ -66,25 +66,27 @@ class PiBot:
             time.sleep(duration)
             self.stop()
 
-    def stop_turn_left(self, speed = None, duration = turn_duration):
+    def stop_turn_left(self, speed = None, duration = 1):
         if speed is None:
-            speed = self.current_speed
-        self.turn_around(speed, clockwise=False, duration=duration)
+            speed = self.current_speed if self.current_speed != 0 else 70
+        duration = duration if duration != 0 else 1
+        self.turn_round(speed, clockwise=False, duration=duration)
 
-    def stop_turn_right(self, speed = None, duration = turn_duration):
+    def stop_turn_right(self, speed = None, duration = 1):
         if speed is None:
-            speed = self.current_speed
-        self.turn_around(speed, clockwise=True, duration=duration)
+            speed = self.current_speed if self.current_speed != 0 else 70
+        duration = duration if duration != 0 else 1
+        self.turn_round(speed, clockwise=True, duration=duration)
 
-    def turn_left(self, duration=turn_duration, delta=turn_speed_delta):
-        speed_delta = self.current_speed+delta
-        self.motor_right.set_speed(speed_delta if speed_delta <= 100 else 100)
+    def turn_left(self, duration=turn_duration):
+        self.motor_left.set_speed(100)
+        self.motor_right.set_speed(60)
         time.sleep(duration)
         self.change_speed(self.current_speed)
 
-    def turn_right(self, duration=turn_duration, delta=turn_speed_delta):
-        speed_delta = self.current_speed+delta
-        self.motor_left.set_speed(speed_delta if speed_delta <= 100 else 100)
+    def turn_right(self, duration=turn_duration):
+        self.motor_left.set_speed(60)
+        self.motor_right.set_speed(100)
         time.sleep(duration)
         self.change_speed(self.current_speed)
     
