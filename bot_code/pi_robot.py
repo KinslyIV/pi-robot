@@ -89,4 +89,7 @@ class PiBot:
         self.motor_right.set_speed(100)
         time.sleep(duration)
         self.change_speed(self.current_speed)
-    
+
+    def clean(self):
+        self.motor_left.cleanup()
+        self.motor_right.cleanup()

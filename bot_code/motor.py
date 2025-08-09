@@ -46,6 +46,7 @@ class Motor:
             speed = self.current_speed
         self.current_speed = speed
         duty_cycle = int((self.current_speed / 100) * MAX_SPEED)
+        # print(duty_cycle)
         self.pi.set_PWM_dutycycle(self.EN, duty_cycle)
 
 
@@ -103,4 +104,6 @@ class Motor:
         elif self.direction is Direction.BACKWARD:
             self.set_direction(forward=False)
             self.set_speed()
-               
+
+    def cleanup(self):
+        self.pi.stop()

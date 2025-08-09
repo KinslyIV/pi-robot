@@ -9,8 +9,8 @@ IN4 = 24
 EN2 = 25
 
 # Other values
-default_freq = 25000
-turn_duration = 0.5
+default_freq = 2000
+turn_duration = 0.8
 turn_speed_delta = 50
 
 MAX_SPEED = 255
