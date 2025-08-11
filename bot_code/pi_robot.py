@@ -1,5 +1,5 @@
 import time
-from motor import Motor
+from motor import Motor, Direction
 from constants import *
 
 
@@ -97,13 +97,16 @@ class PiBot:
 
 
     def turn_right(self, ratio=60, duration=turn_duration):
+        if ratio < 0:
+            self.motor_left.reverse_direction()
         self.motor_right.set_speed(100)
-        self.motor_left.set_speed(ratio)
+        self.motor_left.set_speed(abs(ratio))
         time.sleep(duration)
         self.change_speed(self.current_speed)
 
 
     def clean(self):
+        print("Cleaning up...")
         self.motor_left.cleanup()
         self.motor_right.cleanup()
 

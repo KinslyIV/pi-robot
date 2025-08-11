@@ -1,10 +1,10 @@
 import paho.mqtt.client as mqtt
 import json
+from bot_code.constants import TOPIC
 
 # ===== CONFIGURATION =====
 BROKER_ADDRESS = "localhost"  # Replace with your Pi's IP or hostname
 PORT = 1883
-TOPIC = "robot/command"
 
 # ===== COMMAND MAP =====
 COMMANDS = {
@@ -22,7 +22,7 @@ COMMANDS = {
 }
 
 
-def get_input(prompt, default=None, cast_func=str):
+def get_input(prompt, default=0, cast_func=str):
     value = input(prompt)
     if value.strip() == "":
         return default
@@ -58,12 +58,13 @@ def main():
         try:
             client.publish(TOPIC, json.dumps(message))
             print(f"Published: {message}")
-            client.disconnect()
         except Exception as e:
             print(f"Failed to send command: {e}")
 
+
+
 if __name__ == "__main__":
-    client = mqtt.Client()
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.connect(BROKER_ADDRESS, PORT, keepalive=300)
 
     main()

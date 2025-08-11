@@ -30,5 +30,5 @@ CLEANUP = "cleanup"
 
 # Connection
 TOPIC = "pi-robot/command"
-BROKER_ADDRESS = "100.126.19.42"
+BROKER_ADDRESS = "192.168.1.126"
 

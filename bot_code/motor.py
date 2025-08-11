@@ -123,8 +123,18 @@ class Motor:
 
 
     def cleanup(self):
+        self.pi.set_PWM_dutycycle(self.EN, 0)
         self.pi.stop()
 
 
     def get_speed(self):
         return self.current_speed
+
+
+    def reverse_direction(self):
+        if self.direction is Direction.FORWARD:
+            self.set_direction(False)
+        else:
+            self.set_direction(forward=True)
+
+        self.pi.set_PWM_dutycycle(self.EN, 0)
