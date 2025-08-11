@@ -17,6 +17,8 @@ COMMANDS = {
     "7": "turn_round",
     "8": "stop_turn_left",
     "9": "stop_turn_right",
+    "10": "accelerate",
+    "11": "cleanup",
 }
 
 
@@ -42,8 +44,8 @@ def main():
             return
 
         command = COMMANDS[choice]
-        speed = get_input("Enter speed (0-100) [default: 50]: ", default=50, cast_func=int)
-        duration = get_input("Enter duration in seconds [default: 1.5]: ", default=1.5, cast_func=float)
+        speed = get_input("Enter speed/ratio(for turn) (0-100) [default: 50]: ", default=60, cast_func=int)
+        duration = get_input("Enter duration/delta(for acc) in seconds [default: 1.5]: ", default=1.5, cast_func=float)
 
         message = {
             "command": command,

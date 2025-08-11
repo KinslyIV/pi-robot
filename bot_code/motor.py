@@ -40,10 +40,15 @@ class Motor:
 
        # print(self.IN1, self.IN2, self.EN)
 
+
     def set_speed(self, speed=None):
-        # Sets percentage speed from 0% - 100%
+        # Sets percentage speed from 0% - 100% gradually
+
         if speed is None:
             speed = self.current_speed
+
+        speed = max(min(speed, 100), 0)
+        self.stopped = speed == 0
         self.current_speed = speed
         duty_cycle = int((self.current_speed / 100) * MAX_SPEED)
         # print(duty_cycle)
@@ -53,9 +58,9 @@ class Motor:
     def forward(self, speed = None):
         if speed is None:
             speed = self.current_speed
-        self.stopped = speed == 0
         self.set_direction(forward=True)
         self.set_speed(speed)
+
 
     def set_direction(self, forward):
         if forward:
@@ -67,15 +72,16 @@ class Motor:
             self.pi.write(self.IN1, 0)
             self.pi.write(self.IN2, 1)
 
+
     def backward(self, speed = None):
         if speed is None:
             speed = self.current_speed
-        self.stopped = False
         self.set_direction(False)
         self.set_speed(speed)
 
+
     def stop(self, delay=0.05, step=15):
-        self.stopped = True
+
         """
             Gradually reduce speed to 0 to stop the motor smoothly.
 
@@ -93,9 +99,11 @@ class Motor:
 
         # Once speed is 0, stop the motor direction (optional)
         # print("Motor stopped smoothly.")
+        self.stopped = True
         self.pi.write(self.IN1, 0)
         self.pi.write(self.IN2, 0)
         self.pi.set_PWM_dutycycle(self.EN, 0)
+
 
     def move(self):
         if self.direction is Direction.FORWARD:
@@ -105,5 +113,18 @@ class Motor:
             self.set_direction(forward=False)
             self.set_speed()
 
+
+    def is_moving(self):
+        return not self.stopped
+
+
+    def accelerate(self, delta=10):
+        self.set_speed(self.current_speed + delta)
+
+
     def cleanup(self):
         self.pi.stop()
+
+
+    def get_speed(self):
+        return self.current_speed

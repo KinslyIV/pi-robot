@@ -29,9 +29,13 @@ class PiBot:
             time.sleep(duration)
             self.stop()
 
+
     def stop(self, duration=None):
-        self.motor_left.stop()
-        self.motor_right.stop()
+
+        while self.motor_left.is_moving() and self.motor_right.is_moving():
+            self.motor_left.accelerate(-10)
+            self.motor_right.accelerate(-10)
+            time.sleep(0.05)
 
         if duration:
             time.sleep(duration)
@@ -48,10 +52,13 @@ class PiBot:
             time.sleep(duration)
             self.stop()
 
+
     def change_speed(self, speed):
         self.current_speed = speed
-        self.motor_left.set_speed(speed)
-        self.motor_right.set_speed(speed)
+        while self.motor_left.current_speed != self.motor_right.current_speed != self.current_speed:
+            self.motor_left.accelerate()
+            self.motor_right.accelerate()
+
 
     def turn_round(self, speed = None, clockwise= True, duration= 3.0):
         if speed is None:
@@ -67,11 +74,13 @@ class PiBot:
             time.sleep(duration)
             self.stop()
 
+
     def stop_turn_left(self, speed = None, duration = 1):
         if speed is None:
             speed = self.current_speed if self.current_speed != 0 else 70
         duration = duration if duration != 0 else 1
         self.turn_round(speed, clockwise=False, duration=duration)
+
 
     def stop_turn_right(self, speed = None, duration = 1):
         if speed is None:
@@ -79,18 +88,29 @@ class PiBot:
         duration = duration if duration != 0 else 1
         self.turn_round(speed, clockwise=True, duration=duration)
 
-    def turn_left(self, duration=turn_duration):
+
+    def turn_left(self, ratio=60, duration=turn_duration):
         self.motor_left.set_speed(100)
-        self.motor_right.set_speed(60)
+        self.motor_right.set_speed(ratio)
         time.sleep(duration)
         self.change_speed(self.current_speed)
 
-    def turn_right(self, duration=turn_duration):
-        self.motor_left.set_speed(60)
+
+    def turn_right(self, ratio=60, duration=turn_duration):
         self.motor_right.set_speed(100)
+        self.motor_left.set_speed(ratio)
         time.sleep(duration)
         self.change_speed(self.current_speed)
+
 
     def clean(self):
         self.motor_left.cleanup()
         self.motor_right.cleanup()
+
+
+    def get_speed(self):
+        return self.current_speed
+
+    def accelerate(self, delta=10):
+        self.motor_left.accelerate(delta)
+        self.motor_right.accelerate(delta)

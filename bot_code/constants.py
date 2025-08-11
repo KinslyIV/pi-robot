@@ -25,6 +25,8 @@ CHANGE_SPEED = "change_speed"
 TURN_ROUND = "turn_round"
 STOP_TURN_LEFT = "stop_turn_left"
 STOP_TURN_RIGHT = "stop_turn_right"
+ACCELERATE = "accelerate"
+CLEANUP = "cleanup"
 
 # Connection
 TOPIC = "pi-robot/command"

@@ -25,9 +25,9 @@ def on_message(client, userdata, msg):
         elif command == BACKWARD:
             my_pibot.move_backward(speed, duration)
         elif command == TURN_LEFT:
-            my_pibot.turn_left(speed)
+            my_pibot.turn_left(speed, duration)
         elif command == TURN_RIGHT:
-            my_pibot.turn_right(speed)
+            my_pibot.turn_right(speed, duration)
         elif command == STOP:
             my_pibot.stop(duration)
         elif command == CHANGE_SPEED:
@@ -38,6 +38,10 @@ def on_message(client, userdata, msg):
             my_pibot.stop_turn_left(70)
         elif command == STOP_TURN_RIGHT:
             my_pibot.stop_turn_right(70)
+        elif command == ACCELERATE:
+            my_pibot.accelerate(duration)
+        elif command == CLEANUP:
+            my_pibot.clean()
 
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
