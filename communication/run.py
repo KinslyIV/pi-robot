@@ -1,10 +1,10 @@
 import json
 from bot_code.pi_robot import PiBot
-from bot_code.sim_pibot import SimPiBot
+# from bot_code.sim_pibot import SimPiBot
 from bot_code.constants import (FORWARD, BACKWARD, TURN_RIGHT, TURN_LEFT, CHANGE_SPEED, TURN_ROUND,
                                 STOP, STOP_TURN_LEFT, STOP_TURN_RIGHT, ACCELERATE, CLEANUP)
 
-my_pibot = SimPiBot()
+my_pibot = PiBot()
 
 
 def exec_command(msg_str):

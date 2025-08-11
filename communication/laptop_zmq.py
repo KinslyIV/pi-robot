@@ -11,5 +11,8 @@ if __name__ == "__main__":
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
     socket.bind("tcp://*:5555")
-
-    main(send_message)
+    try:
+        main(send_message)
+    except KeyboardInterrupt:
+        print("Ending Communication...")
+        socket.close()

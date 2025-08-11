@@ -66,8 +66,9 @@ def follow_object(frame, detections):
 
 
 def main():
-    # cap = cv2.VideoCapture(GST_PIPELINE, cv2.CAP_GSTREAMER)
-    cap = cv2.VideoCapture("/home/immata/Downloads/my_vid.mp4")
+
+    cap = cv2.VideoCapture(GST_PIPELINE, cv2.CAP_GSTREAMER)
+    # cap = cv2.VideoCapture("/home/immata/Downloads/my_vid.mp4")
     if not cap.isOpened():
         print("Error: Cannot open GStreamer pipeline.")
         return
