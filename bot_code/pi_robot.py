@@ -27,6 +27,7 @@ class PiBot:
 
         if duration:
             time.sleep(duration)
+            self.stop()
 
     def stop(self, duration=None):
         self.motor_left.stop()

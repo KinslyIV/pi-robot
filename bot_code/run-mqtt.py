@@ -1,16 +1,19 @@
 import json
-
 from pi_robot import PiBot
 from constants import *
 import paho.mqtt.client as mqtt
 
 my_pibot = PiBot()
 
+def on_connect(client, userdata, flags, rc):
+    print("Connected to broker with result code", rc)
+    client.subscribe(TOPIC)
+
 def on_message(client, userdata, msg):
     print(f"Received a new message on {msg.topic}: "
           f"{msg.payload.decode()}")
 
-    if msg.topic == "my_pibot/command":
+    if msg.topic == TOPIC:
         msg_str = msg.payload.decode()
         msg_json = json.loads(msg_str)
         command = msg_json["command"]
@@ -37,10 +40,10 @@ def on_message(client, userdata, msg):
             my_pibot.stop_turn_right(70)
 
 
-client = mqtt.Client()
-client.connect("100.87.65.22", 1883, 300)  # Replace with your computer’s IP
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+client.connect(BROKER_ADDRESS, 1883, 300)  # Replace with your computer’s IP
 
-client.subscribe("robot/command")
+client.subscribe(TOPIC)
 client.on_message = on_message
 
 client.loop_forever()

@@ -25,3 +25,8 @@ CHANGE_SPEED = "change_speed"
 TURN_ROUND = "turn_round"
 STOP_TURN_LEFT = "stop_turn_left"
 STOP_TURN_RIGHT = "stop_turn_right"
+
+# Connection
+TOPIC = "pi-robot/command"
+BROKER_ADDRESS = "100.126.19.42"
+
