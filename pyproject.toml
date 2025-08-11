@@ -5,9 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "opencv-python>=4.12.0.88",
     "paho-mqtt>=2.1.0",
     "pigpio>=1.78",
+    "pyzmq>=27.0.1",
     "rpi",
+    "ultralytics>=8.3.177",
 ]
 
 [tool.uv.sources]

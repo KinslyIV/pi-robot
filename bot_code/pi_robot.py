@@ -1,6 +1,6 @@
 import time
-from motor import Motor, Direction
-from constants import *
+from bot_code.motor import Motor, Direction
+from bot_code.constants import *
 
 
 class PiBot:
@@ -41,6 +41,8 @@ class PiBot:
             time.sleep(duration)
             self.motor_left.move()
             self.motor_right.move()
+        else:
+            self.current_speed = 0
 
 
     def move_backward(self, speed, duration=None):
@@ -54,11 +56,16 @@ class PiBot:
 
 
     def change_speed(self, speed):
-        self.current_speed = speed
-        while self.motor_left.current_speed != self.motor_right.current_speed != self.current_speed:
-            self.motor_left.accelerate()
-            self.motor_right.accelerate()
+        if speed > self.current_speed:
+            while self.motor_left.current_speed < speed or self.motor_right.current_speed < speed:
+                self.motor_left.accelerate()
+                self.motor_right.accelerate()
+        elif speed < self.current_speed:
+            while self.motor_left.current_speed > speed or self.motor_right.current_speed > speed:
+                self.motor_left.accelerate(-10)
+                self.motor_right.accelerate(-10)
 
+        self.current_speed = speed
 
     def turn_round(self, speed = None, clockwise= True, duration= 3.0):
         if speed is None:
@@ -103,6 +110,7 @@ class PiBot:
         self.motor_left.set_speed(abs(ratio))
         time.sleep(duration)
         self.change_speed(self.current_speed)
+
 
 
     def clean(self):

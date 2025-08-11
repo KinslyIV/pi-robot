@@ -31,4 +31,20 @@ CLEANUP = "cleanup"
 # Connection
 TOPIC = "pi-robot/command"
 BROKER_ADDRESS = "192.168.1.126"
+SERVER_IP = "192.168.1.126"
+
+# ===== COMMAND MAP =====
+COMMANDS = {
+    "1": FORWARD,
+    "2": BACKWARD,
+    "3": TURN_LEFT,
+    "4": TURN_RIGHT,
+    "5": STOP,
+    "6": CHANGE_SPEED,
+    "7": TURN_ROUND,
+    "8": STOP_TURN_LEFT,
+    "9": STOP_TURN_RIGHT,
+    "10": ACCELERATE,
+    "11": CLEANUP,
+}
 

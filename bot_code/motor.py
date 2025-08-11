@@ -2,7 +2,7 @@ import time
 from enum import Enum
 import pigpio
 from typing import Optional
-from constants import *
+from bot_code.constants import *
 
 
 class Direction(Enum):
