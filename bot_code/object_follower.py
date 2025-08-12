@@ -9,7 +9,8 @@ TARGET_CLASS = "bottle"               # None = first detected object, or set cla
 
 
 # GStreamer pipeline (Raspberry Pi sending H264 to laptop)
-GST_PIPELINE = "udpsrc port=5000     ! h264parse ! openh264dec ! videoconvert ! autovideosink sync=false"
+GST_PIPELINE = (
+    "udpsrc port=5000     ! h264parse ! openh264dec ! videoconvert ! appsink")
 
 
 def send_command(speed, command : str):
@@ -30,7 +31,7 @@ model = YOLO(YOLO_MODEL_PATH)
 def follow_object(frame, detections):
 
     if len(detections) == 0:
-        send_command(0, 0)  # stop if no object
+        send_command(0, STOP)  # stop if no object
         return
 
     # Pick first detection or specific class
@@ -71,7 +72,7 @@ def main():
     # cap = cv2.VideoCapture("/home/immata/Downloads/my_vid.mp4")
     if not cap.isOpened():
         print("Error: Cannot open GStreamer pipeline.")
-        return
+        exit(1)
 
     while True:
         ret, frame = cap.read()
@@ -98,4 +99,8 @@ if __name__ == "__main__":
     socket = context.socket(zmq.PUB)
     socket.bind("tcp://*:5555")
 
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Ending Communication...")
+        socket.close()

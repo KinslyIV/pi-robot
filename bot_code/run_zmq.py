@@ -1,6 +1,8 @@
 import subprocess
 
 import zmq
+from zmq import ZMQError
+
 from communication.run import exec_command
 from bot_code.constants import SERVER_IP
 
@@ -12,8 +14,12 @@ def main():
             exec_command(msg)
         except KeyboardInterrupt:
             print("Ending Communication and Streaming")
-            process.terminate()
+        except ZMQError as e:
+            print("ZMQ Error: ", e)
+        finally:
             socket.close()
+            process.terminate()
+            exit(0)
 
 if __name__ == "__main__":
     process = subprocess.Popen(["bash", "communication/video_stream.sh"])
