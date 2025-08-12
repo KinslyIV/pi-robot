@@ -1,5 +1,5 @@
 import subprocess
-
+import json
 import zmq
 from zmq import ZMQError
 
@@ -10,7 +10,9 @@ def main():
     while True:
         try:
             msg = socket.recv_string()
-            print(f"Received a new message: {msg} ")
+            if json.loads(msg)['command'] != "stop":
+                print(f"Received a new message: {msg} ")
+            # print(f"Received a new message: {msg} ")
             exec_command(msg)
         except KeyboardInterrupt:
             print("Ending Communication and Streaming")

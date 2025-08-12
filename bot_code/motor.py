@@ -51,7 +51,7 @@ class Motor:
         self.stopped = speed == 0
         self.current_speed = speed
         duty_cycle = int((self.current_speed / 100) * MAX_SPEED)
-        # print(duty_cycle)
+       #  print(duty_cycle)
         self.pi.set_PWM_dutycycle(self.EN, duty_cycle)
 
 
