@@ -18,10 +18,12 @@ class PiBot:
                            kwargs.get('freq', default_freq))
 
         self.current_speed = 0
+        self.direction = Direction.FORWARD
 
         
     def move_forward(self, speed, duration=None):
         self.current_speed = speed
+        self.direction = Direction.FORWARD
         self.motor_left.forward(speed)
         self.motor_right.forward(speed)
 
@@ -47,6 +49,7 @@ class PiBot:
 
     def move_backward(self, speed, duration=None):
         self.current_speed = speed
+        self.direction = Direction.BACKWARD
         self.motor_left.backward(speed)
         self.motor_right.backward(speed)
 
@@ -58,12 +61,10 @@ class PiBot:
     def change_speed(self, speed):
         if speed > self.current_speed:
             while self.motor_left.current_speed < speed or self.motor_right.current_speed < speed:
-                self.motor_left.accelerate()
-                self.motor_right.accelerate()
+                self.accelerate()
         elif speed < self.current_speed:
             while self.motor_left.current_speed > speed or self.motor_right.current_speed > speed:
-                self.motor_left.accelerate(-10)
-                self.motor_right.accelerate(-10)
+                self.accelerate(-10)
 
         self.current_speed = speed
 
@@ -96,21 +97,21 @@ class PiBot:
         self.turn_round(speed, clockwise=True, duration=duration)
 
 
-    def turn_left(self, ratio=71, duration=turn_duration):
+    def turn_left(self, ratio=65, duration=turn_duration):
         if ratio < 0:
             self.motor_right.reverse_direction()
-        self.motor_right.set_speed(70)
-        self.motor_left.set_speed(abs(ratio))
+        self.motor_left.move(abs(ratio))
+        self.motor_right.move(60)
         time.sleep(duration)
         if ratio < 0:
             self.motor_right.reverse_direction()
         self.change_speed(self.current_speed)
 
-    def turn_right(self, ratio=71, duration=turn_duration):
+    def turn_right(self, ratio=65, duration=turn_duration):
         if ratio < 0:
             self.motor_left.reverse_direction()
-        self.motor_right.set_speed(abs(ratio))
-        self.motor_left.set_speed(70)
+        self.motor_right.move(abs(ratio))
+        self.motor_left.move(60)
         # print(f"turning right: left_motor: {self.motor_left.current_speed} duration: {duration} right_motor: {self.motor_right.current_speed}")
         time.sleep(duration)
         if ratio < 0:

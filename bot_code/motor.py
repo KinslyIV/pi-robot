@@ -18,7 +18,7 @@ class Motor:
         self.EN = en
         self.frequency = freq
         self.current_speed = 0
-        self.direction: Optional[Direction] = None
+        self.direction: Optional[Direction] = Direction.FORWARD
         self.stopped: bool = True
         self.pi = pigpio.pi()
         # self.pi.set_PWM_range(self.EN, 100)
@@ -56,28 +56,22 @@ class Motor:
 
 
     def forward(self, speed = None):
-        if speed is None:
-            speed = self.current_speed
-        self.set_direction(forward=True)
-        self.set_speed(speed)
+        self.direction = Direction.FORWARD
+        self.move(speed)
 
 
-    def set_direction(self, forward):
-        if forward:
-            self.direction = Direction.FORWARD
+    def set_direction(self):
+        if self.direction is Direction.FORWARD:
             self.pi.write(self.IN1, 1)
             self.pi.write(self.IN2, 0)
-        else:
-            self.direction = Direction.BACKWARD
+        elif self.direction is Direction.BACKWARD:
             self.pi.write(self.IN1, 0)
             self.pi.write(self.IN2, 1)
 
 
     def backward(self, speed = None):
-        if speed is None:
-            speed = self.current_speed
-        self.set_direction(False)
-        self.set_speed(speed)
+        self.direction = Direction.BACKWARD
+        self.move(speed)
 
 
     def stop(self, delay=0.05, step=15):
@@ -89,7 +83,6 @@ class Motor:
             :param delay: Time (in seconds) to wait between speed changes.
             """
 
-        speed = self.current_speed
         speed = int((self.current_speed / 100) * MAX_SPEED)
         while speed > 0:
             new_speed = max(0, speed - step)
@@ -105,13 +98,9 @@ class Motor:
         self.pi.set_PWM_dutycycle(self.EN, 0)
 
 
-    def move(self):
-        if self.direction is Direction.FORWARD:
-            self.set_direction(True)
-            self.set_speed()
-        elif self.direction is Direction.BACKWARD:
-            self.set_direction(forward=False)
-            self.set_speed()
+    def move(self, speed):
+        self.set_direction()
+        self.set_speed(speed)
 
 
     def is_moving(self):
@@ -133,8 +122,7 @@ class Motor:
 
     def reverse_direction(self):
         if self.direction is Direction.FORWARD:
-            self.set_direction(False)
+            self.direction = Direction.BACKWARD
         else:
-            self.set_direction(forward=True)
+            self.direction = Direction.FORWARD
 
-        self.pi.set_PWM_dutycycle(self.EN, 0)

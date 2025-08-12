@@ -31,7 +31,7 @@ model = YOLO(YOLO_MODEL_PATH)
 def follow_object(frame, detections):
 
     if len(detections) == 0:
-        send_command(0, STOP)  # stop if no object
+        send_command(1, STOP)  # stop if no object
         return
 
     # Pick first detection or specific class
@@ -43,7 +43,7 @@ def follow_object(frame, detections):
             target = det
             break
     if target is None:
-        send_command(0, STOP)
+        send_command(1, STOP)
         return
 
     # Get bounding box center
@@ -60,10 +60,10 @@ def follow_object(frame, detections):
         send_command(70, FORWARD)
     elif offset_norm < 0:
         # Turn left
-        send_command(70, TURN_LEFT)
+        send_command(65, TURN_LEFT)
     else:
         # Turn right
-        send_command(70, TURN_RIGHT)
+        send_command(65, TURN_RIGHT)
 
 
 def main():
