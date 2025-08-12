@@ -27,6 +27,7 @@ if __name__ == "__main__":
     process = subprocess.Popen(["bash", "communication/video_stream.sh"])
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
+    socket.setsockopt(zmq.CONFLATE, 1)
     socket.connect(f"tcp://{SERVER_IP}:5555")  # Laptop is publisher
     socket.setsockopt_string(zmq.SUBSCRIBE, "")
     main()
