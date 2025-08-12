@@ -14,9 +14,11 @@ def main():
             exec_command(msg)
         except KeyboardInterrupt:
             print("Ending Communication and Streaming")
+            socket.close()
+            process.terminate()
+            exit(0)
         except ZMQError as e:
             print("ZMQ Error: ", e)
-        finally:
             socket.close()
             process.terminate()
             exit(0)
