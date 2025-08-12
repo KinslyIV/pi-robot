@@ -10,8 +10,9 @@ EN2 = 25
 
 # Other values
 default_freq = 2000
-turn_duration = 0.5
+TURN_DURATION = 0.5
 turn_speed_delta = 50
+TURN_SPEED = 70
 
 MAX_SPEED = 255
 
