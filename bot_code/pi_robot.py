@@ -97,21 +97,24 @@ class PiBot:
 
 
     def turn_left(self, ratio=60, duration=turn_duration):
-        self.motor_left.set_speed(100)
-        self.motor_right.set_speed(ratio)
-        time.sleep(duration)
-        self.change_speed(self.current_speed)
-
-
-    def turn_right(self, ratio=60, duration=turn_duration):
         if ratio < 0:
-            self.motor_left.reverse_direction()
-        self.motor_right.set_speed(100)
+            self.motor_right.reverse_direction()
+        self.motor_right.set_speed(60)
         self.motor_left.set_speed(abs(ratio))
         time.sleep(duration)
+        if ratio < 0:
+            self.motor_right.reverse_direction()
         self.change_speed(self.current_speed)
 
-
+    def turn_right(self, ratio=70, duration=turn_duration):
+        if ratio < 0:
+            self.motor_left.reverse_direction()
+        self.motor_right.set_speed(abs(ratio))
+        self.motor_left.set_speed(60)
+        time.sleep(duration)
+        if ratio < 0:
+            self.motor_left.reverse_direction()
+        self.change_speed(self.current_speed)
 
     def clean(self):
         print("Cleaning up...")
