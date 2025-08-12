@@ -73,22 +73,26 @@ def main():
     if not cap.isOpened():
         print("Error: Cannot open GStreamer pipeline.")
         exit(1)
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+            # Run YOLO inference
+            results = model(frame)
+            follow_object(frame, results[0].boxes)
 
-        # Run YOLO inference
-        results = model(frame)
-        follow_object(frame, results[0].boxes)
+            # OPTIONAL: visualize
+            annotated = results[0].plot()
+            cv2.imshow("Object Follower", annotated)
 
-        # OPTIONAL: visualize
-        annotated = results[0].plot()
-        cv2.imshow("Object Follower", annotated)
+            if cv2.waitKey(1) & 0xFF == 27:  # ESC to quit
+                break
 
-        if cv2.waitKey(1) & 0xFF == 27:  # ESC to quit
-            break
+    except KeyboardInterrupt:
+        print("Ending Communication...")
+        socket.close()
 
     cap.release()
     cv2.destroyAllWindows()
@@ -99,8 +103,4 @@ if __name__ == "__main__":
     socket = context.socket(zmq.PUB)
     socket.bind("tcp://*:5555")
 
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("Ending Communication...")
-        socket.close()
+    main()
