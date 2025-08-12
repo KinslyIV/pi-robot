@@ -16,12 +16,12 @@ def main():
             print("Ending Communication and Streaming")
             socket.close()
             process.terminate()
-            exit(0)
-        except ZMQError as e:
-            print("ZMQ Error: ", e)
+            return
+        except Exception as e:
+            print("Error: ", e)
             socket.close()
             process.terminate()
-            exit(0)
+            return
 
 if __name__ == "__main__":
     process = subprocess.Popen(["bash", "communication/video_stream.sh"])
@@ -31,3 +31,9 @@ if __name__ == "__main__":
     socket.connect(f"tcp://{SERVER_IP}:5555")  # Laptop is publisher
     socket.setsockopt_string(zmq.SUBSCRIBE, "")
     main()
+    cleanup_msg = {
+        "command": "cleanup",
+        "speed":0,
+        "duration":0
+    }
+    exec_command(cleanup_msg)

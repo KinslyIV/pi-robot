@@ -91,6 +91,12 @@ def main():
                 break
 
     except KeyboardInterrupt:
+        message = {
+            "command": CLEANUP,
+            "speed": 0,
+            "duration": 0
+        }
+        socket.send_json(message)
         print("Ending Communication...")
         socket.close()
 
