@@ -1,10 +1,12 @@
+import time
+
 import zmq
 import cv2
 from ultralytics import YOLO
 from bot_code.constants import (FORWARD, BACKWARD, TURN_RIGHT, TURN_LEFT, CHANGE_SPEED, TURN_ROUND,
                                 STOP, STOP_TURN_LEFT, STOP_TURN_RIGHT, ACCELERATE, CLEANUP)
 
-YOLO_MODEL_PATH = "yolov10n.pt"    # or your trained model
+YOLO_MODEL_PATH = "yolo12n.pt"    # or your trained model
 TARGET_CLASS = "bottle"               # None = first detected object, or set class name like "person"
 
 
@@ -20,7 +22,7 @@ def send_command(speed, command : str):
             "speed": speed,
             "duration": 0
         }
-    socket.send_json(message)
+    # socket.send_json(message)
     print("Sent:", message)
 
 # =========================
@@ -46,6 +48,7 @@ def follow_object(frame, detections):
         send_command(1, STOP)
         return
 
+    print("Target Class:", model.names[int(target.cls)])
     # Get bounding box center
     x1, y1, x2, y2 = target.xyxy[0]
     center_x = (x1 + x2) / 2
@@ -54,16 +57,31 @@ def follow_object(frame, detections):
     # Control: proportional steering
     offset = center_x - frame_center
     offset_norm = offset / frame_center  # -1 (left) to 1 (right)
+    approx_dist = (y2 - y1) / frame.shape[0]
 
-    if abs(offset_norm) < 0.1:
+    # Dynamic turn threshold (min 0.05, max 0.2)
+    turn_threshold = max(0.2, 0.6 * (1 - approx_dist))
+    turn_speed = int(60 + 20 * abs(offset_norm))
+
+    # print(f"x1: {x1}, y1: {y1}, x2: {x2}, y2: {y2}")
+    print(f"height: {y2 - y1}, width: {x2 - x1}")
+    print(f"center_x: {center_x} frame_center: {frame_center}")
+    print(f"offset_norm: {offset_norm} offset: {offset}")
+    print(f"approx_dist: {approx_dist} turn_threshold: {turn_threshold}")
+    print(f"turn_speed: {turn_speed}")
+
+    if approx_dist > 0.9:
+        # Object too close
+        send_command(0, STOP)
+    elif abs(offset_norm) < turn_threshold or approx_dist < 0.5:
         # Go straight
         send_command(70, FORWARD)
     elif offset_norm < 0:
         # Turn left
-        send_command(65, TURN_LEFT)
+        send_command(turn_speed, TURN_LEFT)
     else:
         # Turn right
-        send_command(65, TURN_RIGHT)
+        send_command(turn_speed, TURN_RIGHT)
 
 
 def main():
