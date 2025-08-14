@@ -105,7 +105,7 @@ class PiBot:
         self.turn_round(speed, clockwise=True, duration=duration)
 
 
-    def turn_left(self, ratio=65, duration=TURN_DURATION):
+    def turn_left(self, ratio=70, duration=TURN_DURATION):
         if ratio < 0:
             self.motor_right.reverse_direction()
         self.motor_left.move(abs(ratio))
@@ -115,7 +115,7 @@ class PiBot:
             self.motor_right.reverse_direction()
         self.change_speed(self.current_speed)
 
-    def turn_right(self, ratio=65, duration=TURN_DURATION):
+    def turn_right(self, ratio=70, duration=TURN_DURATION):
         if ratio < 0:
             self.motor_left.reverse_direction()
         self.motor_right.move(abs(ratio))

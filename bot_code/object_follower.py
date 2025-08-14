@@ -22,7 +22,7 @@ def send_command(speed, command : str):
             "speed": speed,
             "duration": 0
         }
-    # socket.send_json(message)
+    socket.send_json(message)
     print("Sent:", message)
 
 # =========================
@@ -60,7 +60,7 @@ def follow_object(frame, detections):
     approx_dist = (y2 - y1) / frame.shape[0]
 
     # Dynamic turn threshold (min 0.05, max 0.2)
-    turn_threshold = max(0.2, 0.6 * (1 - approx_dist))
+    turn_threshold = max(0.2, 0.8 * (0.9 - approx_dist))
     turn_speed = int(60 + 20 * abs(offset_norm))
 
     # print(f"x1: {x1}, y1: {y1}, x2: {x2}, y2: {y2}")
@@ -73,7 +73,7 @@ def follow_object(frame, detections):
     if approx_dist > 0.9:
         # Object too close
         send_command(0, STOP)
-    elif abs(offset_norm) < turn_threshold or approx_dist < 0.5:
+    elif abs(offset_norm) < turn_threshold:
         # Go straight
         send_command(70, FORWARD)
     elif offset_norm < 0:
