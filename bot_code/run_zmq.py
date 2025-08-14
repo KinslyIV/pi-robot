@@ -38,4 +38,4 @@ if __name__ == "__main__":
         "speed":0,
         "duration":0
     }
-    exec_command(cleanup_msg)
+    exec_command(json.dumps(cleanup_msg))

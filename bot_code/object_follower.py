@@ -60,7 +60,7 @@ def follow_object(frame, detections):
     approx_dist = (y2 - y1) / frame.shape[0]
 
     # Dynamic turn threshold (min 0.05, max 0.2)
-    turn_threshold = max(0.2, 0.8 * (0.9 - approx_dist))
+    turn_threshold = max(0.2, (1 - approx_dist))
     turn_speed = int(60 + 20 * abs(offset_norm))
 
     # print(f"x1: {x1}, y1: {y1}, x2: {x2}, y2: {y2}")
